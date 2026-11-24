@@ -315,6 +315,25 @@ function viewNotas(){
   draw();
 }
 
+/* =========================================================
+   VIDEO
+   ========================================================= */
+const CAPITULOS=[[0,'Introducción: herramienta no es criterio','#/teoria/t10'],[90,'Tema 1 · Identidad estratégica: 5P de Mintzberg','#/teoria/t1'],[156,'Tema 2 · Análisis externo: PESTEL y 5 fuerzas','#/teoria/t2'],[234,'Tema 3 · Ventaja y posición: VRIO, FODA, Porter y cadena de valor','#/teoria/t3'],[373,'Tema 4 · Crecimiento: Matriz de Ansoff','#/teoria/t4'],[473,'Tema 5 · Internacionalización y alianzas','#/teoria/t5'],[591,'Tema 6 · Cultura organizacional y cambio','#/teoria/t6'],[743,'Tema 7 · Liderazgo y negociación','#/teoria/t7'],[859,'Tema 8 · Control estratégico: Balanced Scorecard y riesgos','#/teoria/t8'],[1008,'Tema 9 · Sostenibilidad','#/teoria/t9'],[1161,'Tema 10 · Cómo resolver el caso del examen','#/teoria/t10'],[1246,'Cierre','#/caso']];
+const mmss=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+function viewVideo(){
+  setActiveTab('video');
+  app.innerHTML=`<h1>Video de repaso</h1><p class="muted">Todos los temas del curso en 21 minutos, con narración y subtítulos. Toca un capítulo para saltar a ese tema.</p>
+  <div class="card videocard"><video id="vid" controls playsinline preload="metadata" poster="video/poster.jpg"><source src="video/repaso.mp4" type="video/mp4"><track kind="subtitles" src="video/repaso.vtt" srclang="es" label="Español" default>Tu navegador no puede reproducir este video. <a href="video/repaso.mp4">Descárgalo aquí</a>.</video>
+  <div class="flex" style="margin-top:8px"><small class="muted" id="vpos"></small><span class="spacer"></span><a class="btn ghost" href="video/repaso.mp4" download>Descargar (42 MB)</a></div></div>
+  <div class="card"><h2>Capítulos</h2><div class="chapters">${CAPITULOS.map(([t,n,l],i)=>`<div class="chap" data-i="${i}"><button class="btn ghost chapbtn" data-t="${t}"><span class="ct">${mmss(t)}</span> ${esc(n)}</button><a href="${l}" class="chaplink">teoría</a></div>`).join('')}</div>
+  <p class="muted"><small>El video necesita conexión: no se guarda para uso sin internet. Descárgalo si lo quieres ver sin conexión.</small></p></div>`;
+  const v=$('#vid');const saved=store.get('videopos',0);
+  const mark=()=>{const t=v.currentTime||0;let k=0;CAPITULOS.forEach(([s],i)=>{if(t>=s)k=i});$$('.chap').forEach(c=>c.classList.toggle('active',+c.dataset.i===k))};
+  v.addEventListener('loadedmetadata',()=>{if(saved>5&&saved<v.duration-5){v.currentTime=saved;$('#vpos').textContent=`Retomando en ${mmss(saved)}`}mark()},{once:true});
+  v.addEventListener('timeupdate',()=>{mark();saveLater('vpos',()=>store.set('videopos',Math.floor(v.currentTime)),1500)});
+  $$('.chapbtn').forEach(b=>b.addEventListener('click',()=>{const t=+b.dataset.t;v.currentTime=t?t+0.8:0;v.play().catch(()=>{});v.scrollIntoView({behavior:'smooth',block:'center'})}));
+}
+
 /* ---------- Router ---------- */
 function route(){
   const h=location.hash||'#/teoria';
@@ -327,6 +346,7 @@ function route(){
     else if(sec==='practica')viewPractica(sub,arg);
     else if(sec==='simulacro')viewSimulacro();
     else if(sec==='notas')viewNotas();
+    else if(sec==='video')viewVideo();
     else viewTeoria();
   }catch(e){console.error(e);app.innerHTML=`<div class="note bad">Ocurrió un error al mostrar esta sección: ${esc(e.message)}</div>`}
   if(!['practica'].includes(sec)||!arg)window.scrollTo(0,0);

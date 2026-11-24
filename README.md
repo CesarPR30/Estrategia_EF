@@ -7,6 +7,7 @@ Web estática para estudiar el **Examen Final de Estrategia y Organización** (s
 | Sección | Contenido |
 |---|---|
 | **Teoría** | 10 temas basados en las clases S9–S15 (los temas S1–S7 se reconstruyen solo con lo que muestran S12 y S15), diagramas SVG, 17 fichas resumen y un quiz corto por tema. |
+| **Video** | Repaso de todos los temas en 21 minutos (narración, subtítulos en español y capítulos por tema). |
 | **Cómo resolver un caso** | Guía de lectura, estructura de respuesta, mapa de decisión (qué herramienta según la pregunta), receta + trampas + ejemplo resuelto por herramienta, banco de frases y errores que restan puntos. |
 | **Práctica** | 22 casos completos con respuesta modelo y rúbrica sobre 20 · 51 ejercicios por herramienta · 3 generadores con autograder (BSC ponderado, matriz de riesgos, margen de negociación/MAPAN) · 110 preguntas para marcar. |
 | **Simulacro** | 1 o 2 casos al azar, temporizador configurable (120 min por defecto), autocorrección con rúbrica, desglose por criterio y por herramienta, historial. |
@@ -23,7 +24,8 @@ js/app.js             # rutas, almacenamiento y vistas
 js/svg.js             # diagramas SVG con colores del tema
 js/gen.js             # generadores + autograder (también corre en Node)
 js/data/*.js          # teoría, fichas, casos, ejercicios y preguntas
-sw.js                 # service worker (caché versionado)
+video/                # video de repaso (MP4), subtítulos (VTT) y portada
+sw.js                 # service worker (caché versionado; el video no se guarda en caché)
 manifest.webmanifest  # PWA
 icons/                # íconos PNG
 ```

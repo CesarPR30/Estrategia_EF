@@ -1,5 +1,5 @@
 /* Service worker: caché versionado para uso sin conexión. Sube CACHE_VERSION al cambiar archivos. */
-const CACHE_VERSION = 'v1-2026-11-21';
+const CACHE_VERSION = 'v2-2026-11-24';
 const CACHE = 'estrategia-ef-' + CACHE_VERSION;
 const ASSETS = [
   './', './index.html', './manifest.webmanifest', './css/styles.css',
@@ -17,6 +17,8 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET' || new URL(req.url).origin !== location.origin) return;
+  // El video (42 MB, con peticiones por rangos) va directo a la red y no se guarda en caché.
+  if (/\.(mp4|vtt)$/i.test(new URL(req.url).pathname)) return;
   // Red primero para HTML (para recibir actualizaciones), caché primero para el resto.
   if (req.mode === 'navigate') {
     e.respondWith(fetch(req).then(r => { const copy = r.clone(); caches.open(CACHE).then(c => c.put('./index.html', copy)); return r; })
